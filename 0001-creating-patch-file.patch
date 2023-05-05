@@ -1,0 +1,98 @@
+From a0109dc43df01686d573f963732787a5c1e8a022 Mon Sep 17 00:00:00 2001
+From: Anurag <Anuragjain7nov07112001.com>
+Date: Fri, 5 May 2023 20:10:47 +0530
+Subject: [PATCH] creating patch file
+
+---
+ __pycache__/client3.cpython-310.pyc | Bin 0 -> 1063 bytes
+ client3.py                          |   8 +++++---
+ client_test.py                      |   9 +++++++++
+ 3 files changed, 14 insertions(+), 3 deletions(-)
+ create mode 100644 __pycache__/client3.cpython-310.pyc
+
+diff --git a/__pycache__/client3.cpython-310.pyc b/__pycache__/client3.cpython-310.pyc
+new file mode 100644
+index 0000000000000000000000000000000000000000..8914fc18077eba2373e7a526d108fe78c433ff2b
+GIT binary patch
+literal 1063
+zcmYjQOK;ma5GE<glJjcXy6)!21}M5Nnx;ijv@p6atQULh6DhES3xN^Gi4s|INV-K`
+z=j8n%&awCXHM;Jp_o9bA?NCaBQsD3#YBc<2KB`<_Um-Y#>w9|8Cgfl5d_QoH{EE~5
+zgGLigb0V9SN?Q9&2AWB(0~u<r!@r4a>6VUgjUd+XF*9$W4J!~X=z<Q&yT@`B$Z`#W
+zqxIzm@Z}YtOL|7m=owvZ`c+<S6S#_z9eE8}aBV?{Twa$Qc|&&Lrf$P^=)eu=j(C?W
+zC?zLPaCZeF=t6hF&iA%8eS>V@klyMSWKN#XZXG%|>F@65WvcSS(z^cB2TvdDo=m}f
+z{3X*reLBs)QbJOkmm@^PasH0e_R+M-9J6kbQ|dfoTSNz2$l{dMKEL#XIXmTZI%o4>
+z&PN=1gtI5&r786^1)=g>xI+*HfCeqzt9%MpxKbQI0Y*8D5L!7kDYL?fDzvUlkE_U)
+zlVm^BRX8zO3XQMqagSEvC@+=kg;jVmEgcw!T&p(5CQWD?!y0IOJ)ep3vj6v6+8^#&
+zFm`yPvO*1C6fiK^dl(MD9^+}lQEAix>>N$T>5lyXI}Y>gJRGKZ28DZcfAX<fI{-I8
+zsxND*nAEPJVJxPb_;9*Ljo(N;ql@9OZ*$$&7J_yo6`O5~Kfwv?Kvs%!Bx>@B5~|SW
+zcwc<+U)J<{Oh)Gs7hu1B(U?_?t74@0+NZmVp7pge#;Mt;-zCWy%TAKnomakVTHLlm
+zIq@U*t$*9z6Ig7$)`uYK&Eh&2#`S)X{K%GtY#Ah1j^)PG<axG#-vHhy>tw6(W%z3E
+zkJo=y^m*Ne%YzFwh9s$YhGJDA<~V?gCRK<sYAd6QED>fYCs0%^RAQ`L#SJK3wQ7~E
+ziLi`XYZH6qf7V*x`i2zlyJmQ~P1BKQW4wep{OtQ^x6#C%n8uU`JcxsMC5|?kppAfC
+K+F|?~Xa56ek_#*V
+
+literal 0
+HcmV?d00001
+
+diff --git a/client3.py b/client3.py
+index 3fc09b7..6d0896a 100644
+--- a/client3.py
++++ b/client3.py
+@@ -35,14 +35,16 @@ def getDataPoint(quote):
+     stock = quote['stock']
+     bid_price = float(quote['top_bid']['price'])
+     ask_price = float(quote['top_ask']['price'])
+-    price = bid_price
++    price = (bid_price+ask_price)/2
+     return stock, bid_price, ask_price, price
+ 
+ 
+ def getRatio(price_a, price_b):
+     """ Get ratio of price_a and price_b """
+     """ ------------- Update this function ------------- """
+-    return 1
++    if(price_b==0):
++        return
++    return price_a/price_b
+ 
+ 
+ # Main
+@@ -56,4 +58,4 @@ if __name__ == "__main__":
+             stock, bid_price, ask_price, price = getDataPoint(quote)
+             print("Quoted %s at (bid:%s, ask:%s, price:%s)" % (stock, bid_price, ask_price, price))
+ 
+-        print("Ratio %s" % getRatio(price, price))
++        print("Ratio %s" % getRatio(price['ABC'],price['DEF'], price))
+diff --git a/client_test.py b/client_test.py
+index af2bf26..5115e1b 100644
+--- a/client_test.py
++++ b/client_test.py
+@@ -7,17 +7,26 @@ class ClientTest(unittest.TestCase):
+       {'top_ask': {'price': 121.2, 'size': 36}, 'timestamp': '2019-02-11 22:06:30.572453', 'top_bid': {'price': 120.48, 'size': 109}, 'id': '0.109974697771', 'stock': 'ABC'},
+       {'top_ask': {'price': 121.68, 'size': 4}, 'timestamp': '2019-02-11 22:06:30.572453', 'top_bid': {'price': 117.87, 'size': 81}, 'id': '0.109974697771', 'stock': 'DEF'}
+     ]
++    
+     """ ------------ Add the assertion below ------------ """
+ 
++    for quote in quotes:
++      self.assertEqual(getDataPoint(quote), (quote['stock'], quote['top_bid']['price'], quote['top_ask']['price'], (quote['top_bid']['price'] + quote['top_ask']['price'])/2))
++
++
+   def test_getDataPoint_calculatePriceBidGreaterThanAsk(self):
+     quotes = [
+       {'top_ask': {'price': 119.2, 'size': 36}, 'timestamp': '2019-02-11 22:06:30.572453', 'top_bid': {'price': 120.48, 'size': 109}, 'id': '0.109974697771', 'stock': 'ABC'},
+       {'top_ask': {'price': 121.68, 'size': 4}, 'timestamp': '2019-02-11 22:06:30.572453', 'top_bid': {'price': 117.87, 'size': 81}, 'id': '0.109974697771', 'stock': 'DEF'}
+     ]
+     """ ------------ Add the assertion below ------------ """
++    for quote in quotes:
++      self.assertEqual(getDataPoint(quote), (quote['stock'], quote['top_bid']['price'], quote['top_ask']['price'], (quote['top_bid']['price'] + quote['top_ask']['price'])/2))
+ 
++   
+ 
+   """ ------------ Add more unit tests ------------ """
++  
+ 
+ 
+ 
+-- 
+2.33.0.windows.2
